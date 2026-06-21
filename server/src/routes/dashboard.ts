@@ -1,24 +1,13 @@
 import { Router } from "express";
 import { prisma } from "../prisma";
 import { costRatio, necessityBreakdown, netExpenseAmount, goalProjection } from "../advisor";
+import { currentMonth, monthsBetween } from "../dateUtils";
 import type { Income, Transaction, Category, InvestmentInstrument, InvestmentContribution } from "../generated/prisma/client";
 
 type TransactionWithCategory = Transaction & { category: Category };
 type InstrumentWithContributions = InvestmentInstrument & { contributions: InvestmentContribution[] };
 
 export const dashboardRouter = Router();
-
-function currentMonth() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function monthsBetween(from: Date, to: Date) {
-  return Math.max(
-    0,
-    (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth())
-  );
-}
 
 dashboardRouter.get("/", async (req, res) => {
   const month = (req.query.month as string) || currentMonth();

@@ -9,16 +9,40 @@ incomeRouter.get("/", async (_req, res) => {
 });
 
 incomeRouter.post("/", async (req, res) => {
-  const { month, source, amount } = req.body;
-  const income = await prisma.income.create({ data: { month, source, amount } });
+  const { month, source, amount, type, linkedTransactionId } = req.body;
+  const income = await prisma.income.create({
+    data: {
+      month,
+      source,
+      amount: Number(amount),
+      type: type ?? "salary",
+      linkedTransactionId: linkedTransactionId ? Number(linkedTransactionId) : null,
+    },
+  });
+
+  // Settling a reimbursement here also flips the original expense's status, so the
+  // Reimbursement Tracker and this income entry never fall out of sync.
+  if (type === "reimbursement" && linkedTransactionId) {
+    await prisma.transaction.update({
+      where: { id: Number(linkedTransactionId) },
+      data: { reimbursementStatus: "received" },
+    });
+  }
+
   res.status(201).json(income);
 });
 
 incomeRouter.put("/:id", async (req, res) => {
-  const { month, source, amount } = req.body;
+  const { month, source, amount, type, linkedTransactionId } = req.body;
   const income = await prisma.income.update({
     where: { id: Number(req.params.id) },
-    data: { month, source, amount },
+    data: {
+      month,
+      source,
+      amount: amount !== undefined ? Number(amount) : undefined,
+      type,
+      linkedTransactionId: linkedTransactionId ? Number(linkedTransactionId) : undefined,
+    },
   });
   res.json(income);
 });

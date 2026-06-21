@@ -1,19 +1,10 @@
 import { Router } from "express";
 import { prisma } from "../prisma";
+import { addMonths, monthKey } from "../dateUtils";
 
 export const subscriptionsRouter = Router();
 
 const CYCLE_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, yearly: 12 };
-
-function addMonths(date: Date, months: number) {
-  const d = new Date(date);
-  d.setMonth(d.getMonth() + months);
-  return d;
-}
-
-function monthKey(date: Date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
 
 subscriptionsRouter.get("/", async (_req, res) => {
   const subscriptions = await prisma.subscription.findMany({

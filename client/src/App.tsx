@@ -8,6 +8,7 @@ import History from "./pages/History";
 import StatementImport from "./pages/StatementImport";
 import ReimbursementTracker from "./pages/ReimbursementTracker";
 import Bills from "./pages/Bills";
+import Loans from "./pages/Loans";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard" },
@@ -15,6 +16,7 @@ const NAV_ITEMS = [
   { to: "/advisor", label: "Advisor" },
   { to: "/cards", label: "Cards" },
   { to: "/investments", label: "Invest" },
+  { to: "/loans", label: "Loans" },
   { to: "/bills", label: "Bills" },
   { to: "/history", label: "History" },
   { to: "/import", label: "Import" },
@@ -35,6 +37,7 @@ function App() {
           <Route path="/advisor" element={<Advisor />} />
           <Route path="/cards" element={<CardOptimizer />} />
           <Route path="/investments" element={<InvestmentPlanner />} />
+          <Route path="/loans" element={<Loans />} />
           <Route path="/bills" element={<Bills />} />
           <Route path="/history" element={<History />} />
           <Route path="/import" element={<StatementImport />} />
@@ -42,13 +45,13 @@ function App() {
         </Routes>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 flex justify-around border-t border-gray-200 bg-white text-xs">
+      <nav className="fixed bottom-0 left-0 right-0 flex overflow-x-auto border-t border-gray-200 bg-white text-xs">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-0.5 py-2 ${
+              `flex shrink-0 flex-col items-center gap-0.5 px-3 py-2 whitespace-nowrap ${
                 isActive ? "text-purple-600 font-medium" : "text-gray-500"
               }`
             }

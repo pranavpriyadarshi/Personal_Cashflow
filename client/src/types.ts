@@ -36,6 +36,33 @@ export interface Income {
   month: string;
   source: string;
   amount: number;
+  type: "salary" | "passive" | "reimbursement";
+  linkedTransactionId: number | null;
+}
+
+export interface LoanStage {
+  emisPaid: number;
+  emisRemaining: number;
+  percentComplete: number;
+  estimatedOutstanding: number;
+  payoffDate: string;
+  isClosed: boolean;
+}
+
+export interface Loan {
+  id: number;
+  name: string;
+  lenderName: string | null;
+  loanType: "home" | "personal" | "car" | "education" | "other";
+  principalAmount: number;
+  interestRatePct: number;
+  tenureMonths: number;
+  emiAmount: number;
+  loanStartDate: string;
+  firstEmiDate: string;
+  outstandingPrincipal: number | null;
+  status: "active" | "closed";
+  stage: LoanStage;
 }
 
 export interface CreditCard {

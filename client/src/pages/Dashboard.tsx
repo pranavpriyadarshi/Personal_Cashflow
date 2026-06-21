@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { api, currentMonth, formatCurrency, groupCategoriesByParent } from "../api";
-import type { Category, DashboardData } from "../types";
+import type { Category, DashboardData, Transaction } from "../types";
 
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [pendingReimbursements, setPendingReimbursements] = useState<Transaction[]>([]);
   const [form, setForm] = useState({
     categoryId: "",
     amount: "",
@@ -13,17 +14,19 @@ export default function Dashboard() {
     isReimbursable: false,
     reimbursementParty: "",
   });
-  const [incomeForm, setIncomeForm] = useState({ source: "", amount: "" });
+  const [incomeForm, setIncomeForm] = useState({ source: "", amount: "", type: "salary", linkedTransactionId: "" });
 
   const month = currentMonth();
 
   async function load() {
-    const [dashboardRes, categoriesRes] = await Promise.all([
+    const [dashboardRes, categoriesRes, reimbursementsRes] = await Promise.all([
       api.get<DashboardData>("/dashboard", { params: { month } }),
       api.get<Category[]>("/categories"),
+      api.get<{ reimbursements: Transaction[] }>("/transactions/reimbursements"),
     ]);
     setData(dashboardRes.data);
     setCategories(categoriesRes.data);
+    setPendingReimbursements(reimbursementsRes.data.reimbursements.filter((t) => t.reimbursementStatus !== "received"));
   }
 
   useEffect(() => {
@@ -48,9 +51,25 @@ export default function Dashboard() {
 
   async function addIncome(e: React.FormEvent) {
     e.preventDefault();
-    await api.post("/income", { month, source: incomeForm.source, amount: Number(incomeForm.amount) });
-    setIncomeForm({ source: "", amount: "" });
+    await api.post("/income", {
+      month,
+      source: incomeForm.source,
+      amount: Number(incomeForm.amount),
+      type: incomeForm.type,
+      linkedTransactionId: incomeForm.type === "reimbursement" ? incomeForm.linkedTransactionId : undefined,
+    });
+    setIncomeForm({ source: "", amount: "", type: "salary", linkedTransactionId: "" });
     load();
+  }
+
+  function selectReimbursement(transactionId: string) {
+    const tx = pendingReimbursements.find((t) => String(t.id) === transactionId);
+    setIncomeForm({
+      ...incomeForm,
+      linkedTransactionId: transactionId,
+      amount: tx ? String(tx.amount) : incomeForm.amount,
+      source: tx ? `Reimbursement: ${tx.reimbursementParty ?? tx.category.name}` : incomeForm.source,
+    });
   }
 
   if (!data) return <p className="text-sm text-gray-500">Loading…</p>;
@@ -201,13 +220,39 @@ export default function Dashboard() {
       <section className="rounded-lg border border-gray-200 p-4">
         <h2 className="mb-2 text-sm font-medium text-gray-500">Quick add income</h2>
         <form onSubmit={addIncome} className="space-y-2">
-          <input
+          <select
             className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-            placeholder="Source"
-            value={incomeForm.source}
-            onChange={(e) => setIncomeForm({ ...incomeForm, source: e.target.value })}
-            required
-          />
+            value={incomeForm.type}
+            onChange={(e) => setIncomeForm({ ...incomeForm, type: e.target.value, linkedTransactionId: "" })}
+          >
+            <option value="salary">Salary</option>
+            <option value="passive">Passive income</option>
+            <option value="reimbursement">Reimbursement received</option>
+          </select>
+
+          {incomeForm.type === "reimbursement" ? (
+            <select
+              className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+              value={incomeForm.linkedTransactionId}
+              onChange={(e) => selectReimbursement(e.target.value)}
+              required
+            >
+              <option value="">Which pending reimbursement?</option>
+              {pendingReimbursements.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.category.name} — {t.reimbursementParty ?? "unnamed"} — {formatCurrency(t.amount)}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+              placeholder="Source"
+              value={incomeForm.source}
+              onChange={(e) => setIncomeForm({ ...incomeForm, source: e.target.value })}
+              required
+            />
+          )}
           <input
             className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
             type="number"

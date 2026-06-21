@@ -11,11 +11,29 @@ datasource db {
 }
 
 model Income {
-  id        Int      @id @default(autoincrement())
-  month     String // "YYYY-MM" — in-hand earnings, denominator for the 50% cost-ratio rule
-  source    String
-  amount    Float
-  createdAt DateTime @default(now())
+  id                  Int      @id @default(autoincrement())
+  month               String // "YYYY-MM" — in-hand earnings, denominator for the 50% cost-ratio rule
+  source              String
+  amount              Float
+  type                String   @default("salary") // "salary" | "passive" | "reimbursement"
+  linkedTransactionId Int? // set when type = "reimbursement" — the original reimbursable expense this settles
+  createdAt           DateTime @default(now())
+}
+
+model Loan {
+  id                   Int       @id @default(autoincrement())
+  name                 String // "Home Loan - HDFC"
+  lenderName           String?
+  loanType             String // "home" | "personal" | "car" | "education" | "other"
+  principalAmount      Float
+  interestRatePct      Float // annual
+  tenureMonths         Int
+  emiAmount            Float
+  loanStartDate        DateTime
+  firstEmiDate         DateTime
+  outstandingPrincipal Float? // manual update from latest statement; null = derive purely from elapsed EMIs
+  status               String    @default("active") // "active" | "closed"
+  createdAt            DateTime  @default(now())
 }
 
 model Category {
