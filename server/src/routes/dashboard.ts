@@ -12,15 +12,16 @@ export const dashboardRouter = Router();
 dashboardRouter.get("/", async (req, res) => {
   const month = (req.query.month as string) || currentMonth();
 
-  const incomeRows: Income[] = await prisma.income.findMany({ where: { month } });
+  const incomeRows: Income[] = await prisma.income.findMany({ where: { userId: req.userId, month } });
   const transactions: TransactionWithCategory[] = await prisma.transaction.findMany({
-    where: { month },
+    where: { userId: req.userId, month },
     include: { category: true },
   });
   const instruments: InstrumentWithContributions[] = await prisma.investmentInstrument.findMany({
+    where: { userId: req.userId },
     include: { contributions: true },
   });
-  const goal = await prisma.goal.findFirst();
+  const goal = await prisma.goal.findFirst({ where: { userId: req.userId } });
 
   const totalIncome = incomeRows.reduce((sum: number, i: Income) => sum + i.amount, 0);
 

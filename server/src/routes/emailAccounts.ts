@@ -6,8 +6,9 @@ import { syncImapAccount, type ImapCredentials } from "../email/imapSync";
 
 export const emailAccountsRouter = Router();
 
-emailAccountsRouter.get("/", async (_req, res) => {
+emailAccountsRouter.get("/", async (req, res) => {
   const accounts = await prisma.emailAccount.findMany({
+    where: { userId: req.userId },
     select: { id: true, emailAddress: true, provider: true, authType: true, lastSyncedAt: true, createdAt: true },
   });
   res.json(accounts);
@@ -19,6 +20,7 @@ emailAccountsRouter.post("/imap", async (req, res) => {
   const creds: ImapCredentials = { host, port: Number(port), tls: tls !== false, user, password };
   const account = await prisma.emailAccount.create({
     data: {
+      userId: req.userId,
       emailAddress,
       provider: "imap",
       authType: "imap_password",
@@ -76,6 +78,7 @@ emailAccountsRouter.get("/gmail/callback", async (req, res) => {
   const { tokens } = await client.getToken(String(code));
   const account = await prisma.emailAccount.create({
     data: {
+      userId: req.userId,
       emailAddress: String(email),
       provider: "gmail",
       authType: "oauth",

@@ -6,8 +6,9 @@ export const subscriptionsRouter = Router();
 
 const CYCLE_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, yearly: 12 };
 
-subscriptionsRouter.get("/", async (_req, res) => {
+subscriptionsRouter.get("/", async (req, res) => {
   const subscriptions = await prisma.subscription.findMany({
+    where: { userId: req.userId },
     include: { category: true },
     orderBy: { nextRenewalDate: "asc" },
   });
@@ -18,6 +19,7 @@ subscriptionsRouter.post("/", async (req, res) => {
   const { name, categoryId, amount, billingCycle, nextRenewalDate, autoDebit, notes } = req.body;
   const subscription = await prisma.subscription.create({
     data: {
+      userId: req.userId,
       name,
       categoryId: Number(categoryId),
       amount: Number(amount),
@@ -60,6 +62,7 @@ subscriptionsRouter.post("/:id/mark-paid", async (req, res) => {
   const paidOn = new Date();
   const transaction = await prisma.transaction.create({
     data: {
+      userId: req.userId,
       date: paidOn,
       categoryId: subscription.categoryId,
       amount: subscription.amount,

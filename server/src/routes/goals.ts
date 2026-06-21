@@ -3,15 +3,15 @@ import { prisma } from "../prisma";
 
 export const goalsRouter = Router();
 
-goalsRouter.get("/", async (_req, res) => {
-  const goals = await prisma.goal.findMany();
+goalsRouter.get("/", async (req, res) => {
+  const goals = await prisma.goal.findMany({ where: { userId: req.userId } });
   res.json(goals);
 });
 
 goalsRouter.post("/", async (req, res) => {
-  const { name, targetAmount, targetDate } = req.body;
+  const { name, targetAmount, targetDate, riskAppetite } = req.body;
   const goal = await prisma.goal.create({
-    data: { name, targetAmount, targetDate: new Date(targetDate) },
+    data: { userId: req.userId, name, targetAmount, targetDate: new Date(targetDate), riskAppetite },
   });
   res.status(201).json(goal);
 });

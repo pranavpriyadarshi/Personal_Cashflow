@@ -1,3 +1,45 @@
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  dateOfBirth: string | null;
+  employmentType: "salaried" | "self_employed" | "business" | "student" | "retired" | null;
+  monthlyIncomeEstimate: number | null;
+  phone: string | null;
+  dependentsCount: number | null;
+  existingMonthlyEmi: number | null;
+  riskAppetite: "conservative" | "moderate" | "aggressive" | null;
+  cityTier: "metro" | "tier2" | "tier3" | "rural" | null;
+  maritalStatus: "single" | "married" | null;
+  lifeInsuranceCover: number | null;
+  healthInsuranceCover: number | null;
+  taxRegime: "old" | "new" | null;
+  emergencyFundMonths: number | null;
+  existingSavingsAmount: number | null;
+  existingSavingsNotes: string | null;
+  onboardingStep: "profile" | "income" | "fixed_costs" | "invest" | "done";
+  onboardingCompletedAt: string | null;
+}
+
+export interface BudgetEstimate {
+  id: number;
+  category: "rent" | "fees" | "travel" | "dining" | "shopping" | "other";
+  label: string | null;
+  minAmount: number;
+  maxAmount: number;
+}
+
+export interface AllocationAdvice {
+  monthlyIncome: number;
+  fixedCosts: { emiTotal: number; subscriptionTotal: number; budgetTotal: number; total: number };
+  investableMonthlyAmount: number;
+  riskAppetiteUsed: "conservative" | "moderate" | "aggressive";
+  riskAppetiteIsDefaulted: boolean;
+  emergencyFundGapAmount: number;
+  lumpSumAllocation: { name: string; pct: number | null; amount: number }[];
+  monthlyAllocation: { name: string; pct: number; amount: number }[];
+}
+
 export interface Category {
   id: number;
   name: string;
@@ -37,6 +79,7 @@ export interface Income {
   source: string;
   amount: number;
   type: "salary" | "passive" | "reimbursement";
+  isFamilyIncome: boolean;
   linkedTransactionId: number | null;
 }
 
@@ -102,6 +145,7 @@ export interface Goal {
   name: string;
   targetAmount: number;
   targetDate: string;
+  riskAppetite: "conservative" | "moderate" | "aggressive" | null;
 }
 
 export interface DashboardData {

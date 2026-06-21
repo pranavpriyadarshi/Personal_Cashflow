@@ -14,12 +14,19 @@ import { emailAccountsRouter } from "./routes/emailAccounts";
 import { emailTransactionsRouter } from "./routes/emailTransactions";
 import { subscriptionsRouter } from "./routes/subscriptions";
 import { loansRouter } from "./routes/loans";
+import { authRouter } from "./routes/auth";
+import { budgetEstimatesRouter } from "./routes/budgetEstimates";
+import { adviceRouter } from "./routes/advice";
+import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
+app.use("/api/auth", authRouter);
+
+app.use("/api", requireAuth);
 
 app.use("/api/income", incomeRouter);
 app.use("/api/categories", categoriesRouter);
@@ -33,6 +40,8 @@ app.use("/api/email-accounts", emailAccountsRouter);
 app.use("/api/email-transactions", emailTransactionsRouter);
 app.use("/api/subscriptions", subscriptionsRouter);
 app.use("/api/loans", loansRouter);
+app.use("/api/budget-estimates", budgetEstimatesRouter);
+app.use("/api/advice", adviceRouter);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));

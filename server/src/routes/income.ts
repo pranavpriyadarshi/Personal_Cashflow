@@ -3,19 +3,21 @@ import { prisma } from "../prisma";
 
 export const incomeRouter = Router();
 
-incomeRouter.get("/", async (_req, res) => {
-  const income = await prisma.income.findMany({ orderBy: { month: "desc" } });
+incomeRouter.get("/", async (req, res) => {
+  const income = await prisma.income.findMany({ where: { userId: req.userId }, orderBy: { month: "desc" } });
   res.json(income);
 });
 
 incomeRouter.post("/", async (req, res) => {
-  const { month, source, amount, type, linkedTransactionId } = req.body;
+  const { month, source, amount, type, linkedTransactionId, isFamilyIncome } = req.body;
   const income = await prisma.income.create({
     data: {
+      userId: req.userId,
       month,
       source,
       amount: Number(amount),
       type: type ?? "salary",
+      isFamilyIncome: Boolean(isFamilyIncome),
       linkedTransactionId: linkedTransactionId ? Number(linkedTransactionId) : null,
     },
   });
@@ -33,7 +35,7 @@ incomeRouter.post("/", async (req, res) => {
 });
 
 incomeRouter.put("/:id", async (req, res) => {
-  const { month, source, amount, type, linkedTransactionId } = req.body;
+  const { month, source, amount, type, linkedTransactionId, isFamilyIncome } = req.body;
   const income = await prisma.income.update({
     where: { id: Number(req.params.id) },
     data: {
@@ -41,6 +43,7 @@ incomeRouter.put("/:id", async (req, res) => {
       source,
       amount: amount !== undefined ? Number(amount) : undefined,
       type,
+      isFamilyIncome,
       linkedTransactionId: linkedTransactionId ? Number(linkedTransactionId) : undefined,
     },
   });

@@ -10,7 +10,7 @@ export const transactionsRouter = Router();
 transactionsRouter.get("/", async (req, res) => {
   const { month } = req.query;
   const transactions = await prisma.transaction.findMany({
-    where: month ? { month: String(month) } : undefined,
+    where: { userId: req.userId, month: month ? String(month) : undefined },
     include: { category: true },
     orderBy: { date: "desc" },
   });
@@ -31,6 +31,7 @@ transactionsRouter.post("/", async (req, res) => {
   } = req.body;
   const transaction = await prisma.transaction.create({
     data: {
+      userId: req.userId,
       date: new Date(date),
       categoryId,
       amount,
@@ -80,9 +81,9 @@ transactionsRouter.delete("/:id", async (req, res) => {
 });
 
 // Reimbursement Tracker: every reimbursable transaction regardless of month, with pending total.
-transactionsRouter.get("/reimbursements", async (_req, res) => {
+transactionsRouter.get("/reimbursements", async (req, res) => {
   const reimbursements: TransactionWithCategory[] = await prisma.transaction.findMany({
-    where: { isReimbursable: true },
+    where: { userId: req.userId, isReimbursable: true },
     include: { category: true },
     orderBy: { date: "desc" },
   });
@@ -96,7 +97,7 @@ transactionsRouter.get("/reimbursements", async (_req, res) => {
 transactionsRouter.get("/best-card", async (req, res) => {
   const { category } = req.query;
   if (!category) return res.status(400).json({ error: "category query param required" });
-  const cards: CreditCard[] = await prisma.creditCard.findMany();
+  const cards: CreditCard[] = await prisma.creditCard.findMany({ where: { userId: req.userId } });
   const cardProfiles: CardRewardProfile[] = cards.map((c: CreditCard) => ({
     id: c.id,
     name: c.name,

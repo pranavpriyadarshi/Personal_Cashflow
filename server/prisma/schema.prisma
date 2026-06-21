@@ -10,18 +10,67 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+
+  // Set at registration
+  name String
+
+  // Mandatory for completing onboarding's profile step (enforced in app, not DB —
+  // a user exists before these are filled in)
+  dateOfBirth           DateTime?
+  employmentType        String? // "salaried" | "self_employed" | "business" | "student" | "retired"
+  monthlyIncomeEstimate Float? // seeds cost-ratio before granular income entries exist
+
+  // Optional profile fields — each has a UI-side "impact if missing" message
+  phone               String?
+  dependentsCount     Int?
+  existingMonthlyEmi  Float?
+  riskAppetite        String? // "conservative" | "moderate" | "aggressive" — defaulted by age if unset
+  cityTier            String? // "metro" | "tier2" | "tier3" | "rural"
+  maritalStatus       String? // "single" | "married"
+  lifeInsuranceCover  Float?
+  healthInsuranceCover Float?
+  taxRegime           String? // "old" | "new"
+  emergencyFundMonths Float?
+  existingSavingsAmount Float? // declared lump-sum existing savings, used to seed portfolio advice
+  existingSavingsNotes  String?
+
+  onboardingStep        String    @default("profile") // "profile" | "income" | "fixed_costs" | "invest" | "done"
+  onboardingCompletedAt DateTime?
+  createdAt              DateTime @default(now())
+
+  incomes               Income[]
+  loans                 Loan[]
+  subscriptions         Subscription[]
+  transactions          Transaction[]
+  creditCards           CreditCard[]
+  investmentInstruments InvestmentInstrument[]
+  goals                 Goal[]
+  importedTransactions  ImportedTransaction[]
+  emailAccounts         EmailAccount[]
+  budgetEstimates       BudgetEstimate[]
+}
+
 model Income {
   id                  Int      @id @default(autoincrement())
+  userId              Int?
+  user                User?    @relation(fields: [userId], references: [id])
   month               String // "YYYY-MM" — in-hand earnings, denominator for the 50% cost-ratio rule
   source              String
   amount              Float
   type                String   @default("salary") // "salary" | "passive" | "reimbursement"
+  isFamilyIncome      Boolean  @default(false)
   linkedTransactionId Int? // set when type = "reimbursement" — the original reimbursable expense this settles
   createdAt           DateTime @default(now())
 }
 
 model Loan {
   id                   Int       @id @default(autoincrement())
+  userId               Int?
+  user                 User?     @relation(fields: [userId], references: [id])
   name                 String // "Home Loan - HDFC"
   lenderName           String?
   loanType             String // "home" | "personal" | "car" | "education" | "other"
@@ -34,6 +83,17 @@ model Loan {
   outstandingPrincipal Float? // manual update from latest statement; null = derive purely from elapsed EMIs
   status               String    @default("active") // "active" | "closed"
   createdAt            DateTime  @default(now())
+}
+
+model BudgetEstimate {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  category  String // "rent" | "fees" | "travel" | "dining" | "shopping" | "other"
+  label     String?
+  minAmount Float
+  maxAmount Float // equal to minAmount for exact (non-range) costs like rent/fees
+  createdAt DateTime @default(now())
 }
 
 model Category {
@@ -49,6 +109,8 @@ model Category {
 
 model Subscription {
   id              Int       @id @default(autoincrement())
+  userId          Int?
+  user            User?     @relation(fields: [userId], references: [id])
   name            String // "Airtel Postpaid", "JioFiber Wifi", "Netflix" ...
   categoryId      Int
   category        Category  @relation(fields: [categoryId], references: [id])
@@ -62,6 +124,8 @@ model Subscription {
 
 model Transaction {
   id                  Int      @id @default(autoincrement())
+  userId              Int?
+  user                User?    @relation(fields: [userId], references: [id])
   date                DateTime
   categoryId          Int
   category            Category @relation(fields: [categoryId], references: [id])
@@ -77,6 +141,8 @@ model Transaction {
 
 model CreditCard {
   id            Int                 @id @default(autoincrement())
+  userId        Int?
+  user          User?               @relation(fields: [userId], references: [id])
   name          String // SBI / Axis / Kotak
   rewardProfile Json // { category: rewardRatePct, ... } + milestone bonuses, annual fee
   payments      CreditCardPayment[]
@@ -93,6 +159,8 @@ model CreditCardPayment {
 
 model InvestmentInstrument {
   id                      Int                      @id @default(autoincrement())
+  userId                  Int?
+  user                    User?                    @relation(fields: [userId], references: [id])
   name                    String // PPF / NPS / Mutual Fund / Sukanya Samridhi / Gold ...
   expectedAnnualReturnPct Float // user-editable; seeded with sane defaults (PPF 7.1, SSY 8.2, NPS ~10, MF ~12, Gold ~8)
   lockInYears             Float?
@@ -111,13 +179,18 @@ model InvestmentContribution {
 
 model Goal {
   id           Int      @id @default(autoincrement())
+  userId       Int?
+  user         User?    @relation(fields: [userId], references: [id])
   name         String // e.g. "₹30L by Apr 2030"
   targetAmount Float
   targetDate   DateTime
+  riskAppetite String? // "conservative" | "moderate" | "aggressive" — defaults to User.riskAppetite if unset
 }
 
 model ImportedTransaction {
   id                  Int      @id @default(autoincrement())
+  userId              Int?
+  user                User?    @relation(fields: [userId], references: [id])
   date                DateTime
   description         String
   amount              Float
@@ -129,6 +202,8 @@ model ImportedTransaction {
 
 model EmailAccount {
   id           Int                @id @default(autoincrement())
+  userId       Int?
+  user         User?              @relation(fields: [userId], references: [id])
   emailAddress String             @unique
   provider     String // "gmail" | "imap"
   authType     String // "oauth" | "imap_password"

@@ -6,7 +6,10 @@ export const emailTransactionsRouter = Router();
 emailTransactionsRouter.get("/", async (req, res) => {
   const { reconciled } = req.query;
   const transactions = await prisma.emailTransaction.findMany({
-    where: reconciled !== undefined ? { reconciled: reconciled === "true" } : undefined,
+    where: {
+      emailAccount: { userId: req.userId },
+      reconciled: reconciled !== undefined ? reconciled === "true" : undefined,
+    },
     include: { emailAccount: { select: { emailAddress: true } } },
     orderBy: { receivedAt: "desc" },
   });

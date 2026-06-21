@@ -4,14 +4,14 @@ import { estimatedReward } from "../advisor";
 
 export const creditCardsRouter = Router();
 
-creditCardsRouter.get("/", async (_req, res) => {
-  const cards = await prisma.creditCard.findMany({ include: { payments: true } });
+creditCardsRouter.get("/", async (req, res) => {
+  const cards = await prisma.creditCard.findMany({ where: { userId: req.userId }, include: { payments: true } });
   res.json(cards);
 });
 
 creditCardsRouter.post("/", async (req, res) => {
   const { name, rewardProfile } = req.body;
-  const card = await prisma.creditCard.create({ data: { name, rewardProfile } });
+  const card = await prisma.creditCard.create({ data: { userId: req.userId, name, rewardProfile } });
   res.status(201).json(card);
 });
 

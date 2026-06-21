@@ -130,6 +130,63 @@ export function estimatedReward(amount: number, rewardRatePct: number) {
   return amount * (rewardRatePct / 100);
 }
 
+// Model asset-allocation buckets per risk appetite — a starting point the user can
+// see and override, not a black-box recommendation.
+export type RiskAppetite = "conservative" | "moderate" | "aggressive";
+
+const RISK_MODELS: Record<RiskAppetite, { equity: number; debt: number; gold: number }> = {
+  conservative: { equity: 20, debt: 65, gold: 15 },
+  moderate: { equity: 50, debt: 35, gold: 15 },
+  aggressive: { equity: 75, debt: 15, gold: 10 },
+};
+
+// Younger investors have a longer horizon to recover from volatility, so they default
+// to a more growth-heavy bucket until they state a preference of their own.
+export function defaultRiskAppetite(age: number): RiskAppetite {
+  if (age < 35) return "aggressive";
+  if (age < 50) return "moderate";
+  return "conservative";
+}
+
+export interface AssetAllocationInput {
+  riskAppetite: RiskAppetite;
+  investableMonthlyAmount: number; // income minus fixed costs, recurring
+  existingSavingsAmount: number; // lump sum already saved, to be deployed
+  emergencyFundMonths: number; // months of expenses already set aside as cash
+  monthlyExpenses: number; // used to size the emergency-fund target (6 months)
+}
+
+const EMERGENCY_FUND_TARGET_MONTHS = 6;
+
+// Existing savings plug the emergency-fund gap first; only the remainder follows the
+// risk-bucketed model. New monthly surplus always follows the risk model directly.
+export function suggestAssetAllocation(input: AssetAllocationInput) {
+  const model = RISK_MODELS[input.riskAppetite];
+  const emergencyFundGapAmount = Math.max(
+    0,
+    (EMERGENCY_FUND_TARGET_MONTHS - input.emergencyFundMonths) * input.monthlyExpenses
+  );
+
+  const lumpForEmergency = Math.min(input.existingSavingsAmount, emergencyFundGapAmount);
+  const lumpRemaining = input.existingSavingsAmount - lumpForEmergency;
+
+  return {
+    riskAppetite: input.riskAppetite,
+    emergencyFundGapAmount,
+    lumpSumAllocation: [
+      { name: "Emergency fund (liquid)", pct: null, amount: lumpForEmergency },
+      { name: "Equity", pct: model.equity, amount: (lumpRemaining * model.equity) / 100 },
+      { name: "Debt", pct: model.debt, amount: (lumpRemaining * model.debt) / 100 },
+      { name: "Gold", pct: model.gold, amount: (lumpRemaining * model.gold) / 100 },
+    ],
+    monthlyAllocation: [
+      { name: "Equity", pct: model.equity, amount: (input.investableMonthlyAmount * model.equity) / 100 },
+      { name: "Debt", pct: model.debt, amount: (input.investableMonthlyAmount * model.debt) / 100 },
+      { name: "Gold", pct: model.gold, amount: (input.investableMonthlyAmount * model.gold) / 100 },
+    ],
+  };
+}
+
 // Transactions flagged reimbursable-and-pending are not the user's real spend yet —
 // excluded entirely from expense totals until reimbursementStatus becomes "received".
 export interface ReimbursableTransaction {

@@ -38,6 +38,7 @@ importedTransactionsRouter.post("/upload", upload.single("file"), async (req, re
       .map((row) =>
         prisma.importedTransaction.create({
           data: {
+            userId: req.userId,
             date: excelSerialToDate(row.Date ?? row.date),
             description: row.Description ?? row.description ?? "",
             amount: Number(row.Amount ?? row.amount),
@@ -55,7 +56,7 @@ importedTransactionsRouter.post("/upload", upload.single("file"), async (req, re
 importedTransactionsRouter.get("/", async (req, res) => {
   const { reconciled } = req.query;
   const transactions = await prisma.importedTransaction.findMany({
-    where: reconciled !== undefined ? { reconciled: reconciled === "true" } : undefined,
+    where: { userId: req.userId, reconciled: reconciled !== undefined ? reconciled === "true" : undefined },
     orderBy: { date: "desc" },
   });
   res.json(transactions);

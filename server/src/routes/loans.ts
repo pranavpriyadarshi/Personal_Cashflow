@@ -18,8 +18,8 @@ function withStage(loan: Loan) {
   return { ...loan, stage };
 }
 
-loansRouter.get("/", async (_req, res) => {
-  const loans: Loan[] = await prisma.loan.findMany({ orderBy: { createdAt: "asc" } });
+loansRouter.get("/", async (req, res) => {
+  const loans: Loan[] = await prisma.loan.findMany({ where: { userId: req.userId }, orderBy: { createdAt: "asc" } });
   res.json(loans.map(withStage));
 });
 
@@ -28,6 +28,7 @@ loansRouter.post("/", async (req, res) => {
     req.body;
   const loan = await prisma.loan.create({
     data: {
+      userId: req.userId,
       name,
       lenderName,
       loanType,
@@ -85,6 +86,7 @@ loansRouter.post("/:id/log-emi", async (req, res) => {
   const paidOn = new Date();
   const transaction = await prisma.transaction.create({
     data: {
+      userId: req.userId,
       date: paidOn,
       categoryId: category.id,
       amount: loan.emiAmount,

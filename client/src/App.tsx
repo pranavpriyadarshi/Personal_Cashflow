@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes } from "react-router-dom";
+import { Navigate, NavLink, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Ledger from "./pages/Ledger";
 import Advisor from "./pages/Advisor";
@@ -10,6 +10,10 @@ import ReimbursementTracker from "./pages/ReimbursementTracker";
 import Bills from "./pages/Bills";
 import Loans from "./pages/Loans";
 import Overview from "./pages/Overview";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Onboarding from "./pages/Onboarding";
+import { useAuth } from "./AuthContext";
 
 const NAV_ITEMS = [
   { to: "/", label: "Overview" },
@@ -25,7 +29,7 @@ const NAV_ITEMS = [
   { to: "/reimbursements", label: "Reimburse" },
 ];
 
-function App() {
+function MainApp() {
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col pb-16">
       <header className="border-b border-gray-200 px-4 py-3">
@@ -45,6 +49,7 @@ function App() {
           <Route path="/history" element={<History />} />
           <Route path="/import" element={<StatementImport />} />
           <Route path="/reimbursements" element={<ReimbursementTracker />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
@@ -65,6 +70,37 @@ function App() {
         ))}
       </nav>
     </div>
+  );
+}
+
+function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+
+  const postAuthRedirect = user?.onboardingCompletedAt ? "/" : "/onboarding";
+
+  return (
+    <Routes>
+      <Route path="/login" element={user ? <Navigate to={postAuthRedirect} replace /> : <Login />} />
+      <Route path="/register" element={user ? <Navigate to={postAuthRedirect} replace /> : <Register />} />
+      <Route
+        path="/onboarding"
+        element={user ? <Onboarding /> : <Navigate to="/login" replace />}
+      />
+      <Route
+        path="/*"
+        element={
+          !user ? (
+            <Navigate to="/login" replace />
+          ) : !user.onboardingCompletedAt ? (
+            <Navigate to="/onboarding" replace />
+          ) : (
+            <MainApp />
+          )
+        }
+      />
+    </Routes>
   );
 }
 
