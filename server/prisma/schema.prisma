@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Income {
+  id        Int      @id @default(autoincrement())
+  month     String // "YYYY-MM" — in-hand earnings, denominator for the 50% cost-ratio rule
+  source    String
+  amount    Float
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id           Int           @id @default(autoincrement())
+  name         String
+  group        String // "expense" | "investment" | "credit_card"
+  transactions Transaction[]
+}
+
+model Transaction {
+  id                  Int      @id @default(autoincrement())
+  date                DateTime
+  categoryId          Int
+  category            Category @relation(fields: [categoryId], references: [id])
+  amount               Float
+  remarks             String?
+  month               String // "YYYY-MM"
+  necessity           String // "must_have" | "good_to_have" | "not_needed"
+  isReimbursable      Boolean  @default(false)
+  reimbursementParty  String? // who owes this back (employer, friend, etc.)
+  reimbursementStatus String? // "pending" | "received" — null when isReimbursable is false
+  createdAt           DateTime @default(now())
+}
+
+model CreditCard {
+  id            Int                 @id @default(autoincrement())
+  name          String // SBI / Axis / Kotak
+  rewardProfile Json // { category: rewardRatePct, ... } + milestone bonuses, annual fee
+  payments      CreditCardPayment[]
+}
+
+model CreditCardPayment {
+  id                     Int        @id @default(autoincrement())
+  creditCardId           Int
+  creditCard             CreditCard @relation(fields: [creditCardId], references: [id])
+  month                  String
+  amount                 Float
+  estimatedRewardsEarned Float      @default(0)
+}
+
+model InvestmentInstrument {
+  id                      Int                      @id @default(autoincrement())
+  name                    String // PPF / NPS / Mutual Fund / Sukanya Samridhi / Gold ...
+  expectedAnnualReturnPct Float // user-editable; seeded with sane defaults (PPF 7.1, SSY 8.2, NPS ~10, MF ~12, Gold ~8)
+  lockInYears             Float?
+  taxBenefitNotes         String?
+  contributions           InvestmentContribution[]
+}
+
+model InvestmentContribution {
+  id           Int                  @id @default(autoincrement())
+  instrumentId Int
+  instrument   InvestmentInstrument @relation(fields: [instrumentId], references: [id])
+  month        String
+  amount       Float
+  runningValue Float // tracked actual value, since instrument returns aren't linear
+}
+
+model Goal {
+  id           Int      @id @default(autoincrement())
+  name         String // e.g. "₹30L by Apr 2030"
+  targetAmount Float
+  targetDate   DateTime
+}
+
+model ImportedTransaction {
+  id                  Int      @id @default(autoincrement())
+  date                DateTime
+  description         String
+  amount              Float
+  categoryGuess       String?
+  sourceFile          String
+  reconciled          Boolean  @default(false)
+  linkedTransactionId Int?
+}
+
+model EmailAccount {
+  id           Int                @id @default(autoincrement())
+  emailAddress String             @unique
+  provider     String // "gmail" | "imap"
+  authType     String // "oauth" | "imap_password"
+  credentials  Json // encrypted (AES-256-GCM) OAuth tokens or IMAP host/port/app-password — never stored plaintext
+  lastSyncedAt DateTime?
+  createdAt    DateTime           @default(now())
+  transactions EmailTransaction[]
+}
+
+model EmailTransaction {
+  id                  Int          @id @default(autoincrement())
+  emailAccountId      Int
+  emailAccount        EmailAccount @relation(fields: [emailAccountId], references: [id])
+  receivedAt          DateTime
+  sourceLabel         String // e.g. "SBI Card", "Axis Bank", "UPI-GPay" — derived from sender domain
+  mode                String // "credit_card" | "upi" | "bank_debit" | "bank_credit"
+  parsedAmount        Float
+  parsedMerchant      String?
+  rawSnippet          String // minimal text kept for audit, not the full email body
+  reconciled          Boolean      @default(false)
+  linkedTransactionId Int?
+  createdAt           DateTime     @default(now())
+}

@@ -1,0 +1,61 @@
+import { NavLink, Route, Routes } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Ledger from "./pages/Ledger";
+import Advisor from "./pages/Advisor";
+import CardOptimizer from "./pages/CardOptimizer";
+import InvestmentPlanner from "./pages/InvestmentPlanner";
+import History from "./pages/History";
+import StatementImport from "./pages/StatementImport";
+import ReimbursementTracker from "./pages/ReimbursementTracker";
+
+const NAV_ITEMS = [
+  { to: "/", label: "Dashboard" },
+  { to: "/ledger", label: "Ledger" },
+  { to: "/advisor", label: "Advisor" },
+  { to: "/cards", label: "Cards" },
+  { to: "/investments", label: "Invest" },
+  { to: "/history", label: "History" },
+  { to: "/import", label: "Import" },
+  { to: "/reimbursements", label: "Reimburse" },
+];
+
+function App() {
+  return (
+    <div className="mx-auto flex min-h-screen max-w-2xl flex-col pb-16">
+      <header className="border-b border-gray-200 px-4 py-3">
+        <h1 className="text-lg font-semibold text-gray-900">Personal CFO</h1>
+      </header>
+
+      <main className="flex-1 px-4 py-4">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/ledger" element={<Ledger />} />
+          <Route path="/advisor" element={<Advisor />} />
+          <Route path="/cards" element={<CardOptimizer />} />
+          <Route path="/investments" element={<InvestmentPlanner />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/import" element={<StatementImport />} />
+          <Route path="/reimbursements" element={<ReimbursementTracker />} />
+        </Routes>
+      </main>
+
+      <nav className="fixed bottom-0 left-0 right-0 flex justify-around border-t border-gray-200 bg-white text-xs">
+        {NAV_ITEMS.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `flex flex-1 flex-col items-center gap-0.5 py-2 ${
+                isActive ? "text-purple-600 font-medium" : "text-gray-500"
+              }`
+            }
+          >
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+export default App;
