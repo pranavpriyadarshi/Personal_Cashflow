@@ -20,7 +20,7 @@ import { adviceRouter } from "./routes/advice";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_URL || true }));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
