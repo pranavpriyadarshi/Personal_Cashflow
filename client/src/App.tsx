@@ -9,9 +9,11 @@ import StatementImport from "./pages/StatementImport";
 import ReimbursementTracker from "./pages/ReimbursementTracker";
 import Bills from "./pages/Bills";
 import Loans from "./pages/Loans";
+import Overview from "./pages/Overview";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Dashboard" },
+  { to: "/", label: "Overview" },
+  { to: "/add", label: "Add" },
   { to: "/ledger", label: "Ledger" },
   { to: "/advisor", label: "Advisor" },
   { to: "/cards", label: "Cards" },
@@ -32,7 +34,8 @@ function App() {
 
       <main className="flex-1 px-4 py-4">
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Overview />} />
+          <Route path="/add" element={<Dashboard />} />
           <Route path="/ledger" element={<Ledger />} />
           <Route path="/advisor" element={<Advisor />} />
           <Route path="/cards" element={<CardOptimizer />} />
@@ -50,6 +53,7 @@ function App() {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.to === "/"}
             className={({ isActive }) =>
               `flex shrink-0 flex-col items-center gap-0.5 px-3 py-2 whitespace-nowrap ${
                 isActive ? "text-purple-600 font-medium" : "text-gray-500"
