@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, currentMonth, formatCurrency } from "../api";
+import { api, currentMonth, formatCurrency, groupCategoriesByParent } from "../api";
 import type { Category, Transaction } from "../types";
 
 const NECESSITY_LABELS: Record<string, string> = {
@@ -11,7 +11,7 @@ const NECESSITY_LABELS: Record<string, string> = {
 export default function Ledger() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [newCategory, setNewCategory] = useState({ name: "", group: "expense" });
+  const [newCategory, setNewCategory] = useState({ name: "", group: "expense", parentId: "" });
   const month = currentMonth();
 
   async function load() {
@@ -29,8 +29,12 @@ export default function Ledger() {
 
   async function addCategory(e: React.FormEvent) {
     e.preventDefault();
-    await api.post("/categories", newCategory);
-    setNewCategory({ name: "", group: "expense" });
+    await api.post("/categories", {
+      name: newCategory.name,
+      group: newCategory.group,
+      parentId: newCategory.parentId || undefined,
+    });
+    setNewCategory({ name: "", group: "expense", parentId: "" });
     load();
   }
 
@@ -83,14 +87,37 @@ export default function Ledger() {
 
       <section className="rounded-lg border border-gray-200 p-4">
         <h2 className="mb-2 text-sm font-medium text-gray-500">Categories</h2>
-        <ul className="mb-3 flex flex-wrap gap-2 text-xs">
-          {categories.map((c) => (
-            <li key={c.id} className="rounded-full bg-gray-100 px-2 py-1">
-              {c.name} <span className="text-gray-400">({c.group})</span>
-            </li>
-          ))}
+        <ul className="mb-3 space-y-2 text-xs">
+          {(() => {
+            const { standalone, groups } = groupCategoriesByParent(categories);
+            return (
+              <>
+                {groups.map((g) => (
+                  <li key={g.parent.id}>
+                    <span className="rounded-full bg-gray-200 px-2 py-1 font-medium">{g.parent.name}</span>
+                    <span className="ml-2 inline-flex flex-wrap gap-1">
+                      {g.children.map((c) => (
+                        <span key={c.id} className="rounded-full bg-gray-100 px-2 py-1">
+                          {c.name}
+                        </span>
+                      ))}
+                    </span>
+                  </li>
+                ))}
+                {standalone.length > 0 && (
+                  <li className="flex flex-wrap gap-1">
+                    {standalone.map((c) => (
+                      <span key={c.id} className="rounded-full bg-gray-100 px-2 py-1">
+                        {c.name} <span className="text-gray-400">({c.group})</span>
+                      </span>
+                    ))}
+                  </li>
+                )}
+              </>
+            );
+          })()}
         </ul>
-        <form onSubmit={addCategory} className="flex gap-2">
+        <form onSubmit={addCategory} className="flex flex-wrap gap-2">
           <input
             className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm"
             placeholder="New category"
@@ -106,6 +133,20 @@ export default function Ledger() {
             <option value="expense">Expense</option>
             <option value="investment">Investment</option>
             <option value="credit_card">Credit card</option>
+          </select>
+          <select
+            className="rounded border border-gray-300 px-2 py-1 text-sm"
+            value={newCategory.parentId}
+            onChange={(e) => setNewCategory({ ...newCategory, parentId: e.target.value })}
+          >
+            <option value="">No parent (top-level)</option>
+            {categories
+              .filter((c) => c.parentId == null)
+              .map((c) => (
+                <option key={c.id} value={c.id}>
+                  Sub-category of {c.name}
+                </option>
+              ))}
           </select>
           <button type="submit" className="rounded bg-purple-600 px-3 text-sm font-medium text-white">
             Add

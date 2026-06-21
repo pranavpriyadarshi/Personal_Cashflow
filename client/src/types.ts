@@ -2,6 +2,19 @@ export interface Category {
   id: number;
   name: string;
   group: "expense" | "investment" | "credit_card";
+  parentId: number | null;
+}
+
+export interface Subscription {
+  id: number;
+  name: string;
+  categoryId: number;
+  category: Category;
+  amount: number;
+  billingCycle: "monthly" | "quarterly" | "yearly";
+  nextRenewalDate: string;
+  autoDebit: boolean;
+  notes: string | null;
 }
 
 export interface Transaction {

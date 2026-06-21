@@ -9,16 +9,18 @@ categoriesRouter.get("/", async (_req, res) => {
 });
 
 categoriesRouter.post("/", async (req, res) => {
-  const { name, group } = req.body;
-  const category = await prisma.category.create({ data: { name, group } });
+  const { name, group, parentId } = req.body;
+  const category = await prisma.category.create({
+    data: { name, group, parentId: parentId ? Number(parentId) : null },
+  });
   res.status(201).json(category);
 });
 
 categoriesRouter.put("/:id", async (req, res) => {
-  const { name, group } = req.body;
+  const { name, group, parentId } = req.body;
   const category = await prisma.category.update({
     where: { id: Number(req.params.id) },
-    data: { name, group },
+    data: { name, group, parentId: parentId ? Number(parentId) : null },
   });
   res.json(category);
 });

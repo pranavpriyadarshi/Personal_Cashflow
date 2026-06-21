@@ -7,6 +7,7 @@ import InvestmentPlanner from "./pages/InvestmentPlanner";
 import History from "./pages/History";
 import StatementImport from "./pages/StatementImport";
 import ReimbursementTracker from "./pages/ReimbursementTracker";
+import Bills from "./pages/Bills";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard" },
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
   { to: "/advisor", label: "Advisor" },
   { to: "/cards", label: "Cards" },
   { to: "/investments", label: "Invest" },
+  { to: "/bills", label: "Bills" },
   { to: "/history", label: "History" },
   { to: "/import", label: "Import" },
   { to: "/reimbursements", label: "Reimburse" },
@@ -33,6 +35,7 @@ function App() {
           <Route path="/advisor" element={<Advisor />} />
           <Route path="/cards" element={<CardOptimizer />} />
           <Route path="/investments" element={<InvestmentPlanner />} />
+          <Route path="/bills" element={<Bills />} />
           <Route path="/history" element={<History />} />
           <Route path="/import" element={<StatementImport />} />
           <Route path="/reimbursements" element={<ReimbursementTracker />} />

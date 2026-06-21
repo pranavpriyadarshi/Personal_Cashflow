@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, currentMonth, formatCurrency } from "../api";
+import { api, currentMonth, formatCurrency, groupCategoriesByParent } from "../api";
 import type { Category, DashboardData } from "../types";
 
 export default function Dashboard() {
@@ -134,9 +134,24 @@ export default function Dashboard() {
             required
           >
             <option value="">Category…</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
+            {(() => {
+              const { standalone, groups } = groupCategoriesByParent(categories);
+              return (
+                <>
+                  {standalone.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                  {groups.map((g) => (
+                    <optgroup key={g.parent.id} label={g.parent.name}>
+                      <option value={g.parent.id}>{g.parent.name} (general)</option>
+                      {g.children.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </>
+              );
+            })()}
           </select>
           <input
             className="w-full rounded border border-gray-300 px-2 py-1 text-sm"

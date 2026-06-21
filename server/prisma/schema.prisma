@@ -19,10 +19,27 @@ model Income {
 }
 
 model Category {
-  id           Int           @id @default(autoincrement())
-  name         String
-  group        String // "expense" | "investment" | "credit_card"
-  transactions Transaction[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  group         String // "expense" | "investment" | "credit_card"
+  parentId      Int?
+  parent        Category?      @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children      Category[]     @relation("CategoryHierarchy")
+  transactions  Transaction[]
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id              Int       @id @default(autoincrement())
+  name            String // "Airtel Postpaid", "JioFiber Wifi", "Netflix" ...
+  categoryId      Int
+  category        Category  @relation(fields: [categoryId], references: [id])
+  amount          Float
+  billingCycle    String // "monthly" | "quarterly" | "yearly"
+  nextRenewalDate DateTime
+  autoDebit       Boolean   @default(false)
+  notes           String?
+  createdAt       DateTime  @default(now())
 }
 
 model Transaction {
