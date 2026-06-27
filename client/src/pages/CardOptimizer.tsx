@@ -47,39 +47,39 @@ export default function CardOptimizer() {
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Your cards</h2>
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Your cards</h2>
         <div className="space-y-3">
           {cards.map((card) => {
             const totalRewards = card.payments.reduce((sum, p) => sum + p.estimatedRewardsEarned, 0);
             const f = paymentForms[card.id] ?? { amount: "", category: "" };
             return (
-              <div key={card.id} className="rounded-lg border border-gray-200 p-3">
+              <div key={card.id} className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
                 <div className="flex justify-between text-sm font-medium">
                   <span>{card.name}</span>
-                  <span className="text-green-600">{formatCurrency(totalRewards)} earned</span>
+                  <span className="text-green-600 dark:text-green-400">{formatCurrency(totalRewards)} earned</span>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   {Object.entries(card.rewardProfile)
                     .map(([k, v]) => `${k}: ${v}%`)
                     .join(" · ")}
                 </p>
                 <div className="mt-2 flex gap-2">
                   <input
-                    className="w-24 rounded border border-gray-300 px-2 py-1 text-xs"
+                    className="w-24 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs"
                     placeholder="Amount"
                     type="number"
                     value={f.amount}
                     onChange={(e) => setPaymentForms({ ...paymentForms, [card.id]: { ...f, amount: e.target.value } })}
                   />
                   <input
-                    className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs"
+                    className="flex-1 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs"
                     placeholder="Category (optional)"
                     value={f.category}
                     onChange={(e) => setPaymentForms({ ...paymentForms, [card.id]: { ...f, category: e.target.value } })}
                   />
                   <button
                     onClick={() => logPayment(card.id)}
-                    className="rounded bg-gray-800 px-3 text-xs font-medium text-white"
+                    className="rounded bg-gray-800 dark:bg-gray-600 px-3 text-xs font-medium text-white"
                   >
                     Log
                   </button>
@@ -90,30 +90,30 @@ export default function CardOptimizer() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Add a card</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Add a card</h2>
         <form onSubmit={addCard} className="space-y-2">
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Card name (e.g. Axis Bank)"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
           />
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Default reward rate %"
             type="number"
             value={form.defaultRate}
             onChange={(e) => setForm({ ...form, defaultRate: e.target.value })}
           />
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Category rates, e.g. Grocery:5, Dining:10"
             value={form.categoryRates}
             onChange={(e) => setForm({ ...form, categoryRates: e.target.value })}
           />
-          <button type="submit" className="w-full rounded bg-purple-600 py-1.5 text-sm font-medium text-white">
+          <button type="submit" className="w-full rounded bg-purple-600 dark:bg-purple-500 py-1.5 text-sm font-medium text-white">
             Add card
           </button>
         </form>

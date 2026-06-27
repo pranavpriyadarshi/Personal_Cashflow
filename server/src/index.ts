@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 
 import { incomeRouter } from "./routes/income";
 import { categoriesRouter } from "./routes/categories";
@@ -10,7 +11,7 @@ import { investmentsRouter } from "./routes/investments";
 import { goalsRouter } from "./routes/goals";
 import { dashboardRouter } from "./routes/dashboard";
 import { importedTransactionsRouter } from "./routes/importedTransactions";
-import { emailAccountsRouter } from "./routes/emailAccounts";
+import { emailAccountsRouter, gmailOAuthCallback } from "./routes/emailAccounts";
 import { emailTransactionsRouter } from "./routes/emailTransactions";
 import { subscriptionsRouter } from "./routes/subscriptions";
 import { loansRouter } from "./routes/loans";
@@ -20,11 +21,17 @@ import { adviceRouter } from "./routes/advice";
 import { requireAuth } from "./middleware/requireAuth";
 
 const app = express();
+app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL || true }));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 app.use("/api/auth", authRouter);
+
+// Hit by Google's browser redirect, which can't carry our usual Bearer token — must be
+// registered before the blanket auth middleware below. Identity is recovered from a signed
+// state param instead (see gmailOAuthCallback).
+app.get("/api/email-accounts/gmail/callback", gmailOAuthCallback);
 
 app.use("/api", requireAuth);
 

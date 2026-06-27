@@ -33,8 +33,8 @@ export default function History() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Last 6 months</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Last 6 months</h2>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={rows}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -49,8 +49,8 @@ export default function History() {
         </ResponsiveContainer>
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Cost ratio % (target 50%)</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Cost ratio % (target 50%)</h2>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={rows}>
             <CartesianGrid strokeDasharray="3 3" />

@@ -52,7 +52,7 @@ export default function Ledger() {
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Monthly ledger ({month})</h2>
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Monthly ledger ({month})</h2>
         {groups.map((g) => {
           const items = transactions.filter((t) => t.necessity === g);
           const total = totalsByGroup.find((t) => t.g === g)!.total;
@@ -62,8 +62,8 @@ export default function Ledger() {
                 <span>{NECESSITY_LABELS[g]}</span>
                 <span>{formatCurrency(total)}</span>
               </div>
-              <ul className="divide-y divide-gray-100 rounded border border-gray-200">
-                {items.length === 0 && <li className="p-2 text-xs text-gray-400">No entries</li>}
+              <ul className="divide-y divide-gray-100 rounded border border-gray-200 dark:border-gray-700">
+                {items.length === 0 && <li className="p-2 text-xs text-gray-400 dark:text-gray-500">No entries</li>}
                 {items.map((t) => (
                   <li key={t.id} className="flex items-center justify-between p-2 text-sm">
                     <span>
@@ -73,7 +73,7 @@ export default function Ledger() {
                     </span>
                     <span className="flex items-center gap-2">
                       {formatCurrency(t.amount)}
-                      <button onClick={() => removeTransaction(t.id)} className="text-xs text-red-500">
+                      <button onClick={() => removeTransaction(t.id)} className="text-xs text-red-500 dark:text-red-400">
                         ✕
                       </button>
                     </span>
@@ -85,8 +85,8 @@ export default function Ledger() {
         })}
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Categories</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Categories</h2>
         <ul className="mb-3 space-y-2 text-xs">
           {(() => {
             const { standalone, groups } = groupCategoriesByParent(categories);
@@ -94,10 +94,10 @@ export default function Ledger() {
               <>
                 {groups.map((g) => (
                   <li key={g.parent.id}>
-                    <span className="rounded-full bg-gray-200 px-2 py-1 font-medium">{g.parent.name}</span>
+                    <span className="rounded-full bg-gray-200 dark:bg-gray-700 px-2 py-1 font-medium">{g.parent.name}</span>
                     <span className="ml-2 inline-flex flex-wrap gap-1">
                       {g.children.map((c) => (
-                        <span key={c.id} className="rounded-full bg-gray-100 px-2 py-1">
+                        <span key={c.id} className="rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-1">
                           {c.name}
                         </span>
                       ))}
@@ -107,8 +107,8 @@ export default function Ledger() {
                 {standalone.length > 0 && (
                   <li className="flex flex-wrap gap-1">
                     {standalone.map((c) => (
-                      <span key={c.id} className="rounded-full bg-gray-100 px-2 py-1">
-                        {c.name} <span className="text-gray-400">({c.group})</span>
+                      <span key={c.id} className="rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-1">
+                        {c.name} <span className="text-gray-400 dark:text-gray-500">({c.group})</span>
                       </span>
                     ))}
                   </li>
@@ -119,14 +119,14 @@ export default function Ledger() {
         </ul>
         <form onSubmit={addCategory} className="flex flex-wrap gap-2">
           <input
-            className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm"
+            className="flex-1 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="New category"
             value={newCategory.name}
             onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
             required
           />
           <select
-            className="rounded border border-gray-300 px-2 py-1 text-sm"
+            className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={newCategory.group}
             onChange={(e) => setNewCategory({ ...newCategory, group: e.target.value })}
           >
@@ -135,7 +135,7 @@ export default function Ledger() {
             <option value="credit_card">Credit card</option>
           </select>
           <select
-            className="rounded border border-gray-300 px-2 py-1 text-sm"
+            className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={newCategory.parentId}
             onChange={(e) => setNewCategory({ ...newCategory, parentId: e.target.value })}
           >
@@ -148,7 +148,7 @@ export default function Ledger() {
                 </option>
               ))}
           </select>
-          <button type="submit" className="rounded bg-purple-600 px-3 text-sm font-medium text-white">
+          <button type="submit" className="rounded bg-purple-600 dark:bg-purple-500 px-3 text-sm font-medium text-white">
             Add
           </button>
         </form>

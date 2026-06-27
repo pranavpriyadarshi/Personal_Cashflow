@@ -51,13 +51,13 @@ export default function Onboarding() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
-      <h1 className="mb-1 text-lg font-semibold text-gray-900">Set up your Personal CFO</h1>
+      <h1 className="mb-1 text-lg font-semibold text-gray-900 dark:text-gray-100">Set up your Personal CFO</h1>
       <div className="mb-6 flex gap-2 text-xs">
         {STEPS.map((s, i) => (
           <div
             key={s}
             className={`flex-1 rounded py-1 text-center ${
-              s === step ? "bg-purple-600 text-white" : i < STEPS.indexOf(step) ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-400"
+              s === step ? "bg-purple-600 dark:bg-purple-500 text-white" : i < STEPS.indexOf(step) ? "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400" : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
             }`}
           >
             {STEP_LABELS[s]}
@@ -125,20 +125,20 @@ function ProfileStep({ onContinue }: { onContinue: () => void }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Required</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Required</h2>
         <div className="space-y-2">
-          <label className="block text-xs text-gray-500">Date of birth</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400">Date of birth</label>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="date"
             value={form.dateOfBirth}
             onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
             required
           />
-          <label className="block text-xs text-gray-500">Employment type</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400">Employment type</label>
           <select
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={form.employmentType}
             onChange={(e) => setForm({ ...form, employmentType: e.target.value })}
             required
@@ -150,28 +150,28 @@ function ProfileStep({ onContinue }: { onContinue: () => void }) {
             <option value="student">Student</option>
             <option value="retired">Retired</option>
           </select>
-          <label className="block text-xs text-gray-500">Monthly net (post-tax) income estimate</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400">Monthly net (post-tax) income estimate</label>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="number"
             value={form.monthlyIncomeEstimate}
             onChange={(e) => setForm({ ...form, monthlyIncomeEstimate: e.target.value })}
             required
           />
-          <label className="block text-xs text-gray-500">Phone (optional)</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400">Phone (optional)</label>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
         </div>
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <button
           type="button"
           onClick={() => setShowOptional(!showOptional)}
-          className="mb-2 text-sm font-medium text-gray-500"
+          className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400"
         >
           Optional — {filledOptionalKeys.size}/{OPTIONAL_FIELD_IMPACT.length} filled {showOptional ? "▲" : "▼"}
         </button>
@@ -179,10 +179,10 @@ function ProfileStep({ onContinue }: { onContinue: () => void }) {
           <div className="space-y-3">
             {OPTIONAL_FIELD_IMPACT.map((f) => (
               <div key={f.key}>
-                <label className="block text-xs text-gray-500">{f.label}</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400">{f.label}</label>
                 {f.key === "riskAppetite" ? (
                   <select
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
                     value={form.riskAppetite}
                     onChange={(e) => setForm({ ...form, riskAppetite: e.target.value })}
                   >
@@ -193,7 +193,7 @@ function ProfileStep({ onContinue }: { onContinue: () => void }) {
                   </select>
                 ) : f.key === "cityTier" ? (
                   <select
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
                     value={form.cityTier}
                     onChange={(e) => setForm({ ...form, cityTier: e.target.value })}
                   >
@@ -205,7 +205,7 @@ function ProfileStep({ onContinue }: { onContinue: () => void }) {
                   </select>
                 ) : f.key === "maritalStatus" ? (
                   <select
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
                     value={form.maritalStatus}
                     onChange={(e) => setForm({ ...form, maritalStatus: e.target.value })}
                   >
@@ -215,7 +215,7 @@ function ProfileStep({ onContinue }: { onContinue: () => void }) {
                   </select>
                 ) : f.key === "taxRegime" ? (
                   <select
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
                     value={form.taxRegime}
                     onChange={(e) => setForm({ ...form, taxRegime: e.target.value })}
                   >
@@ -225,21 +225,21 @@ function ProfileStep({ onContinue }: { onContinue: () => void }) {
                   </select>
                 ) : (
                   <input
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
                     type="number"
                     value={(form as any)[f.key]}
                     onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
                   />
                 )}
-                {!(form as any)[f.key] && <p className="mt-0.5 text-xs text-amber-600">{f.impact}</p>}
+                {!(form as any)[f.key] && <p className="mt-0.5 text-xs text-amber-600 dark:text-amber-400">{f.impact}</p>}
               </div>
             ))}
           </div>
         )}
       </section>
 
-      {error && <p className="text-xs text-red-600">{error}</p>}
-      <button type="submit" className="w-full rounded bg-purple-600 py-2 text-sm font-medium text-white">
+      {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+      <button type="submit" className="w-full rounded bg-purple-600 dark:bg-purple-500 py-2 text-sm font-medium text-white">
         Continue
       </button>
     </form>
@@ -269,22 +269,22 @@ function IncomeStep({ onContinue }: { onContinue: () => void }) {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">This month's income sources</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">This month's income sources</h2>
         <ul className="mb-3 space-y-1 text-sm">
           {incomes.map((i) => (
             <li key={i.id} className="flex justify-between">
               <span>
-                {i.source} {i.isFamilyIncome && <span className="text-xs text-gray-400">(family)</span>}
+                {i.source} {i.isFamilyIncome && <span className="text-xs text-gray-400 dark:text-gray-500">(family)</span>}
               </span>
               <span>{formatCurrency(i.amount)}</span>
             </li>
           ))}
-          {incomes.length === 0 && <li className="text-xs text-gray-400">No income added yet.</li>}
+          {incomes.length === 0 && <li className="text-xs text-gray-400 dark:text-gray-500">No income added yet.</li>}
         </ul>
         <form onSubmit={addIncome} className="space-y-2">
           <select
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
           >
@@ -292,14 +292,14 @@ function IncomeStep({ onContinue }: { onContinue: () => void }) {
             <option value="passive">Passive income</option>
           </select>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Source (e.g. Employer, Rental income)"
             value={form.source}
             onChange={(e) => setForm({ ...form, source: e.target.value })}
             required
           />
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="number"
             placeholder="Amount"
             value={form.amount}
@@ -314,7 +314,7 @@ function IncomeStep({ onContinue }: { onContinue: () => void }) {
             />
             This is family income, not individual
           </label>
-          <button type="submit" className="w-full rounded bg-gray-800 py-1.5 text-sm font-medium text-white">
+          <button type="submit" className="w-full rounded bg-gray-800 dark:bg-gray-600 py-1.5 text-sm font-medium text-white">
             Add income
           </button>
         </form>
@@ -322,11 +322,11 @@ function IncomeStep({ onContinue }: { onContinue: () => void }) {
       <button
         onClick={onContinue}
         disabled={incomes.length === 0}
-        className="w-full rounded bg-purple-600 py-2 text-sm font-medium text-white disabled:opacity-40"
+        className="w-full rounded bg-purple-600 dark:bg-purple-500 py-2 text-sm font-medium text-white disabled:opacity-40"
       >
         Continue
       </button>
-      {incomes.length === 0 && <p className="text-center text-xs text-gray-400">Add at least one income source to continue.</p>}
+      {incomes.length === 0 && <p className="text-center text-xs text-gray-400 dark:text-gray-500">Add at least one income source to continue.</p>}
     </div>
   );
 }
@@ -371,9 +371,9 @@ function FixedCostsStep({ onContinue }: { onContinue: () => void }) {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-1 text-sm font-medium text-gray-500">Fixed costs</h2>
-        <p className="mb-3 text-xs text-gray-400">
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">Fixed costs</h2>
+        <p className="mb-3 text-xs text-gray-400 dark:text-gray-500">
           EMIs and bills/subscriptions you've already onboarded in the Loans and Bills tabs are counted automatically — no
           need to re-enter them here.
         </p>
@@ -384,13 +384,13 @@ function FixedCostsStep({ onContinue }: { onContinue: () => void }) {
             return (
               <div key={c.key}>
                 <p className="text-sm font-medium">{c.label}</p>
-                <ul className="mb-1 space-y-1 text-xs text-gray-500">
+                <ul className="mb-1 space-y-1 text-xs text-gray-500 dark:text-gray-400">
                   {rows.map((r) => (
                     <li key={r.id} className="flex justify-between">
                       <span>
                         {c.isRange ? `${formatCurrency(r.minAmount)} – ${formatCurrency(r.maxAmount)}` : formatCurrency(r.minAmount)}
                       </span>
-                      <button onClick={() => remove(r.id)} className="text-red-500">
+                      <button onClick={() => remove(r.id)} className="text-red-500 dark:text-red-400">
                         Remove
                       </button>
                     </li>
@@ -398,7 +398,7 @@ function FixedCostsStep({ onContinue }: { onContinue: () => void }) {
                 </ul>
                 <div className="flex gap-2">
                   <input
-                    className="w-24 rounded border border-gray-300 px-2 py-1 text-xs"
+                    className="w-24 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs"
                     type="number"
                     placeholder={c.isRange ? "Min" : "Amount"}
                     value={f.min}
@@ -406,14 +406,14 @@ function FixedCostsStep({ onContinue }: { onContinue: () => void }) {
                   />
                   {c.isRange && (
                     <input
-                      className="w-24 rounded border border-gray-300 px-2 py-1 text-xs"
+                      className="w-24 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs"
                       type="number"
                       placeholder="Max"
                       value={f.max}
                       onChange={(e) => setForms({ ...forms, [c.key]: { ...f, max: e.target.value } })}
                     />
                   )}
-                  <button onClick={() => save(c.key)} className="rounded bg-gray-800 px-3 text-xs font-medium text-white">
+                  <button onClick={() => save(c.key)} className="rounded bg-gray-800 dark:bg-gray-600 px-3 text-xs font-medium text-white">
                     Add
                   </button>
                 </div>
@@ -422,7 +422,7 @@ function FixedCostsStep({ onContinue }: { onContinue: () => void }) {
           })}
         </div>
       </section>
-      <button onClick={onContinue} className="w-full rounded bg-purple-600 py-2 text-sm font-medium text-white">
+      <button onClick={onContinue} className="w-full rounded bg-purple-600 dark:bg-purple-500 py-2 text-sm font-medium text-white">
         Continue
       </button>
     </div>
@@ -478,12 +478,12 @@ function InvestStep({ onFinish }: { onFinish: () => void }) {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Risk profile & existing savings</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Risk profile & existing savings</h2>
         <form onSubmit={savePreferences} className="space-y-2">
-          <label className="block text-xs text-gray-500">Risk appetite</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400">Risk appetite</label>
           <select
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={profileForm.riskAppetite}
             onChange={(e) => setProfileForm({ ...profileForm, riskAppetite: e.target.value })}
           >
@@ -492,42 +492,42 @@ function InvestStep({ onFinish }: { onFinish: () => void }) {
             <option value="moderate">Moderate</option>
             <option value="aggressive">Aggressive</option>
           </select>
-          <label className="block text-xs text-gray-500">Existing savings / lump sum to invest</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400">Existing savings / lump sum to invest</label>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="number"
             value={profileForm.existingSavingsAmount}
             onChange={(e) => setProfileForm({ ...profileForm, existingSavingsAmount: e.target.value })}
           />
-          <label className="block text-xs text-gray-500">Emergency fund already saved (months of expenses)</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400">Emergency fund already saved (months of expenses)</label>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="number"
             value={profileForm.emergencyFundMonths}
             onChange={(e) => setProfileForm({ ...profileForm, emergencyFundMonths: e.target.value })}
           />
-          <button type="submit" className="w-full rounded bg-gray-800 py-1.5 text-sm font-medium text-white">
+          <button type="submit" className="w-full rounded bg-gray-800 dark:bg-gray-600 py-1.5 text-sm font-medium text-white">
             Save & recompute
           </button>
         </form>
       </section>
 
       {advice && (
-        <section className="rounded-lg border border-gray-200 p-4">
-          <h2 className="mb-1 text-sm font-medium text-gray-500">
+        <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+          <h2 className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">
             Suggested allocation ({advice.riskAppetiteUsed}
             {advice.riskAppetiteIsDefaulted ? ", defaulted by age" : ""})
           </h2>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Income {formatCurrency(advice.monthlyIncome)} − fixed costs {formatCurrency(advice.fixedCosts.total)} ={" "}
-            <span className="font-medium text-gray-700">{formatCurrency(advice.investableMonthlyAmount)}</span> investable/month
+            <span className="font-medium text-gray-700 dark:text-gray-300">{formatCurrency(advice.investableMonthlyAmount)}</span> investable/month
           </p>
           {advice.emergencyFundGapAmount > 0 && (
-            <p className="mt-1 text-xs text-amber-600">
+            <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
               Emergency fund gap: {formatCurrency(advice.emergencyFundGapAmount)} — existing savings are routed here first.
             </p>
           )}
-          <p className="mt-3 text-xs font-medium text-gray-500">Monthly surplus</p>
+          <p className="mt-3 text-xs font-medium text-gray-500 dark:text-gray-400">Monthly surplus</p>
           <ul className="text-sm">
             {advice.monthlyAllocation.map((b) => (
               <li key={b.name} className="flex justify-between">
@@ -538,7 +538,7 @@ function InvestStep({ onFinish }: { onFinish: () => void }) {
           </ul>
           {advice.lumpSumAllocation.some((b) => b.amount > 0) && (
             <>
-              <p className="mt-3 text-xs font-medium text-gray-500">Existing savings</p>
+              <p className="mt-3 text-xs font-medium text-gray-500 dark:text-gray-400">Existing savings</p>
               <ul className="text-sm">
                 {advice.lumpSumAllocation
                   .filter((b) => b.amount > 0)
@@ -554,29 +554,29 @@ function InvestStep({ onFinish }: { onFinish: () => void }) {
         </section>
       )}
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Goals</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Goals</h2>
         <ul className="mb-3 space-y-1 text-sm">
           {goals.map((g) => (
             <li key={g.id} className="flex justify-between">
               <span>{g.name}</span>
-              <span className="text-gray-500">
+              <span className="text-gray-500 dark:text-gray-400">
                 {formatCurrency(g.targetAmount)} by {new Date(g.targetDate).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
               </span>
             </li>
           ))}
-          {goals.length === 0 && <li className="text-xs text-gray-400">No goals yet.</li>}
+          {goals.length === 0 && <li className="text-xs text-gray-400 dark:text-gray-500">No goals yet.</li>}
         </ul>
         <form onSubmit={addGoal} className="space-y-2">
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Goal name (e.g. ₹30L by Apr 2030)"
             value={goalForm.name}
             onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })}
             required
           />
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="number"
             placeholder="Target amount"
             value={goalForm.targetAmount}
@@ -584,19 +584,19 @@ function InvestStep({ onFinish }: { onFinish: () => void }) {
             required
           />
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="date"
             value={goalForm.targetDate}
             onChange={(e) => setGoalForm({ ...goalForm, targetDate: e.target.value })}
             required
           />
-          <button type="submit" className="w-full rounded bg-gray-800 py-1.5 text-sm font-medium text-white">
+          <button type="submit" className="w-full rounded bg-gray-800 dark:bg-gray-600 py-1.5 text-sm font-medium text-white">
             Add goal
           </button>
         </form>
       </section>
 
-      <button onClick={onFinish} className="w-full rounded bg-purple-600 py-2 text-sm font-medium text-white">
+      <button onClick={onFinish} className="w-full rounded bg-purple-600 dark:bg-purple-500 py-2 text-sm font-medium text-white">
         Finish setup
       </button>
     </div>

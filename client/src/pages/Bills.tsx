@@ -55,52 +55,52 @@ export default function Bills() {
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Bills & subscriptions</h2>
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Bills & subscriptions</h2>
         <ul className="space-y-2">
           {subscriptions.map((s) => {
             const dueDate = new Date(s.nextRenewalDate);
             const overdue = dueDate < today;
             return (
-              <li key={s.id} className="rounded-lg border border-gray-200 p-3 text-sm">
+              <li key={s.id} className="rounded-lg border border-gray-200 dark:border-gray-700 p-3 text-sm">
                 <div className="flex justify-between font-medium">
                   <span>{s.name}</span>
                   <span>{formatCurrency(s.amount)}</span>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {s.category.name} · {s.billingCycle} · next due{" "}
-                  <span className={overdue ? "font-medium text-red-600" : ""}>
+                  <span className={overdue ? "font-medium text-red-600 dark:text-red-400" : ""}>
                     {dueDate.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                   </span>
                   {s.autoDebit ? " · auto-debit" : ""}
                 </p>
-                {s.notes && <p className="text-xs text-gray-400">{s.notes}</p>}
+                {s.notes && <p className="text-xs text-gray-400 dark:text-gray-500">{s.notes}</p>}
                 <div className="mt-2 flex gap-3">
-                  <button onClick={() => markPaid(s.id)} className="text-xs text-purple-600">
+                  <button onClick={() => markPaid(s.id)} className="text-xs text-purple-600 dark:text-purple-400">
                     Mark paid
                   </button>
-                  <button onClick={() => removeSubscription(s.id)} className="text-xs text-red-500">
+                  <button onClick={() => removeSubscription(s.id)} className="text-xs text-red-500 dark:text-red-400">
                     Remove
                   </button>
                 </div>
               </li>
             );
           })}
-          {subscriptions.length === 0 && <li className="text-xs text-gray-400">No bills onboarded yet.</li>}
+          {subscriptions.length === 0 && <li className="text-xs text-gray-400 dark:text-gray-500">No bills onboarded yet.</li>}
         </ul>
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Onboard a bill / subscription</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Onboard a bill / subscription</h2>
         <form onSubmit={addSubscription} className="space-y-2">
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Name (e.g. Airtel Postpaid, JioFiber Wifi, Netflix)"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
           />
           <select
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={form.categoryId}
             onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
             required
@@ -119,7 +119,7 @@ export default function Bills() {
             ))}
           </select>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="number"
             placeholder="Amount"
             value={form.amount}
@@ -127,7 +127,7 @@ export default function Bills() {
             required
           />
           <select
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             value={form.billingCycle}
             onChange={(e) => setForm({ ...form, billingCycle: e.target.value })}
           >
@@ -136,7 +136,7 @@ export default function Bills() {
             <option value="yearly">Yearly</option>
           </select>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             type="date"
             value={form.nextRenewalDate}
             onChange={(e) => setForm({ ...form, nextRenewalDate: e.target.value })}
@@ -151,12 +151,12 @@ export default function Bills() {
             Auto-debit
           </label>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Notes (optional)"
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
           />
-          <button type="submit" className="w-full rounded bg-purple-600 py-1.5 text-sm font-medium text-white">
+          <button type="submit" className="w-full rounded bg-purple-600 dark:bg-purple-500 py-1.5 text-sm font-medium text-white">
             Add bill
           </button>
         </form>

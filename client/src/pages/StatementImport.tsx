@@ -86,8 +86,8 @@ export default function StatementImport() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Upload statement export</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Upload statement export</h2>
         <form onSubmit={upload} className="space-y-2">
           <input
             type="file"
@@ -95,15 +95,15 @@ export default function StatementImport() {
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             className="block w-full text-sm"
           />
-          <button type="submit" className="w-full rounded bg-purple-600 py-1.5 text-sm font-medium text-white">
+          <button type="submit" className="w-full rounded bg-purple-600 dark:bg-purple-500 py-1.5 text-sm font-medium text-white">
             Upload & parse
           </button>
         </form>
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Imported transactions</h2>
-        <ul className="divide-y divide-gray-100 rounded border border-gray-200">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Imported transactions</h2>
+        <ul className="divide-y divide-gray-100 rounded border border-gray-200 dark:border-gray-700">
           {imported.map((t) => (
             <li key={t.id} className="flex items-center justify-between p-2 text-sm">
               <span>
@@ -112,7 +112,7 @@ export default function StatementImport() {
               <span className="flex items-center gap-2">
                 {formatCurrency(t.amount)}
                 {!t.reconciled && (
-                  <button onClick={() => reconcileImported(t.id)} className="text-xs text-purple-600">
+                  <button onClick={() => reconcileImported(t.id)} className="text-xs text-purple-600 dark:text-purple-400">
                     Reconcile
                   </button>
                 )}
@@ -122,15 +122,15 @@ export default function StatementImport() {
         </ul>
       </section>
 
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Connected email accounts</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Connected email accounts</h2>
         <ul className="mb-3 space-y-1 text-sm">
           {emailAccounts.map((a) => (
             <li key={a.id} className="flex items-center justify-between">
               <span>
                 {a.emailAddress} ({a.provider})
               </span>
-              <button onClick={() => syncAccount(a.id)} className="text-xs text-purple-600">
+              <button onClick={() => syncAccount(a.id)} className="text-xs text-purple-600 dark:text-purple-400">
                 Sync now
               </button>
             </li>
@@ -138,7 +138,7 @@ export default function StatementImport() {
         </ul>
         <form onSubmit={connectImap} className="space-y-2">
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Email address"
             value={imapForm.emailAddress}
             onChange={(e) => setImapForm({ ...imapForm, emailAddress: e.target.value })}
@@ -146,43 +146,43 @@ export default function StatementImport() {
           />
           <div className="flex gap-2">
             <input
-              className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm"
+              className="flex-1 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
               placeholder="IMAP host"
               value={imapForm.host}
               onChange={(e) => setImapForm({ ...imapForm, host: e.target.value })}
               required
             />
             <input
-              className="w-20 rounded border border-gray-300 px-2 py-1 text-sm"
+              className="w-20 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
               placeholder="Port"
               value={imapForm.port}
               onChange={(e) => setImapForm({ ...imapForm, port: e.target.value })}
             />
           </div>
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="Username"
             value={imapForm.user}
             onChange={(e) => setImapForm({ ...imapForm, user: e.target.value })}
             required
           />
           <input
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+            className="w-full rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm"
             placeholder="App password"
             type="password"
             value={imapForm.password}
             onChange={(e) => setImapForm({ ...imapForm, password: e.target.value })}
             required
           />
-          <button type="submit" className="w-full rounded bg-gray-800 py-1.5 text-sm font-medium text-white">
+          <button type="submit" className="w-full rounded bg-gray-800 dark:bg-gray-600 py-1.5 text-sm font-medium text-white">
             Connect inbox
           </button>
         </form>
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium text-gray-500">Parsed email transactions</h2>
-        <ul className="divide-y divide-gray-100 rounded border border-gray-200">
+        <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Parsed email transactions</h2>
+        <ul className="divide-y divide-gray-100 rounded border border-gray-200 dark:border-gray-700">
           {emailTransactions.map((t) => (
             <li key={t.id} className="flex items-center justify-between p-2 text-sm">
               <span>
@@ -191,7 +191,7 @@ export default function StatementImport() {
               <span className="flex items-center gap-2">
                 {formatCurrency(t.parsedAmount)}
                 {!t.reconciled && (
-                  <button onClick={() => reconcileEmail(t.id)} className="text-xs text-purple-600">
+                  <button onClick={() => reconcileEmail(t.id)} className="text-xs text-purple-600 dark:text-purple-400">
                     Reconcile
                   </button>
                 )}

@@ -1,3 +1,26 @@
+export interface EmailAccount {
+  id: number;
+  emailAddress: string;
+  provider: "gmail" | "imap";
+  authType: "oauth" | "imap_password";
+  lastSyncedAt: string | null;
+  createdAt: string;
+}
+
+export interface EmailTransaction {
+  id: number;
+  emailAccountId: number;
+  emailAccount: { emailAddress: string };
+  receivedAt: string;
+  sourceLabel: string;
+  mode: "credit_card" | "upi" | "bank_debit" | "bank_credit";
+  parsedAmount: number;
+  parsedMerchant: string | null;
+  rawSnippet: string;
+  reconciled: boolean;
+  linkedTransactionId: number | null;
+}
+
 export interface User {
   id: number;
   email: string;

@@ -26,14 +26,14 @@ export default function ReimbursementTracker() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg border border-gray-200 p-4">
-        <h2 className="mb-1 text-sm font-medium text-gray-500">Pending reimbursements</h2>
+      <section className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <h2 className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">Pending reimbursements</h2>
         <p className="text-xl font-semibold">{formatCurrency(pendingTotal)}</p>
-        <p className="text-xs text-gray-500">Excluded from your expense totals until received.</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">Excluded from your expense totals until received.</p>
       </section>
 
       <section>
-        <ul className="divide-y divide-gray-100 rounded border border-gray-200">
+        <ul className="divide-y divide-gray-100 rounded border border-gray-200 dark:border-gray-700">
           {reimbursements.map((t) => (
             <li key={t.id} className="flex items-center justify-between p-2 text-sm">
               <span>
@@ -43,16 +43,16 @@ export default function ReimbursementTracker() {
               <span className="flex items-center gap-2">
                 {formatCurrency(t.amount)}
                 {t.reimbursementStatus === "received" ? (
-                  <span className="text-xs text-green-600">Received</span>
+                  <span className="text-xs text-green-600 dark:text-green-400">Received</span>
                 ) : (
-                  <button onClick={() => markReceived(t)} className="text-xs text-purple-600">
+                  <button onClick={() => markReceived(t)} className="text-xs text-purple-600 dark:text-purple-400">
                     Mark received
                   </button>
                 )}
               </span>
             </li>
           ))}
-          {reimbursements.length === 0 && <li className="p-2 text-xs text-gray-400">No reimbursable expenses logged.</li>}
+          {reimbursements.length === 0 && <li className="p-2 text-xs text-gray-400 dark:text-gray-500">No reimbursable expenses logged.</li>}
         </ul>
       </section>
     </div>
